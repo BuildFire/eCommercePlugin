@@ -1,6 +1,6 @@
 'use strict';
 
-(function (angular) {
+(function (angular,buildfire) {
   angular
     .module('eCommercePluginWidget')
     .controller('WidgetCartCtrl', ['$scope', 'DataStore', 'TAG_NAMES', 'ECommerceSDK', '$sce', 'LAYOUTS', '$rootScope', 'Buildfire', 'ViewStack',
@@ -15,6 +15,11 @@
           if (html)
             return $sce.trustAsHtml(html);
         };
+
+        //Refresh list of items on pulling the tile bar
+        buildfire.datastore.onRefresh(function () {
+
+        });
 
         WidgetCart.removeItemFromCart = function (item) {
           var success = function (result) {
@@ -175,4 +180,4 @@
         init();
       }
     ])
-})(window.angular);
+})(window.angular, window.buildfire);
