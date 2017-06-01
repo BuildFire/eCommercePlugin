@@ -43,6 +43,8 @@
                     symbol:"SFr"
                 }];
 
+                SettingsHome.newCurrency = [];
+
                 var _data = {
                     "content": {
                         "carouselImages": [],
@@ -73,10 +75,19 @@
                         if(err)
                             console.error('Error while getting data', err);
                         else {
-                            SettingsHome.data = data.data;
-                            $scope.$apply();
-                            updateMasterItem(SettingsHome.data);
-                            if (tmrDelay)clearTimeout(tmrDelay);
+                            buildfire.datastore.get(TAG_NAMES.NEW_CURRENCY,function(err,currencyData){
+                                if(err)
+                                    console.error('Error while getting data', err);
+                                else {
+                                    if(currencyData.data && currencyData.data.length > 0)
+                                        SettingsHome.newCurrency = currencyData.data;
+
+                                    SettingsHome.data = data.data;
+                                    $scope.$apply();
+                                    updateMasterItem(SettingsHome.data);
+                                    if (tmrDelay)clearTimeout(tmrDelay);
+                                }
+                            });
                         }
                     });
                 };
@@ -118,6 +129,13 @@
                 $scope.$watch(function () {
                     return SettingsHome.data;
                 }, saveDataWithDelay, true);
+
+                SettingsHome.addNewCurrency = function () {
+                    SettingsHome.newCurrency.push(SettingsHome.newSymbol);
+                    SettingsHome.changeCurrency(SettingsHome.newSymbol);
+                    SettingsHome.newSymbol =  {};
+                    saveData(SettingsHome.newCurrency,TAG_NAMES.NEW_CURRENCY);
+                };
 
                 init();
 
